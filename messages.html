@@ -1,0 +1,20 @@
+<!-- templates/fallen_messages.html -->
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fallen Messages</title>
+</head>
+
+<body>
+    <h1>Fallen Messages</h1>
+    <ul>
+        {% for message in fallen_messages %}
+        <li>Fall Detected: {{ message.fall_detected }}, Heart Distress: {{ message.heart_distress }}</li>
+        {% endfor %}
+    </ul>
+</body>
+
+</html>

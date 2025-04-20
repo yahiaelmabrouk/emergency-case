@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Caregiver Dashboard</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f4f4f4;
+            text-align: center;
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        #intro-image {
+            max-width: 100%;
+            height: auto;
+            border-radius: 10px;
+        }
+
+        #fallen-messages {
+            margin-top: 20px;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        #fallen-messages-list {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        #no-falls-message {
+            font-size: 1.2em;
+            color: #777;
+        }
+
+        #real-time-alerts {
+            margin-top: 20px;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        #real-time-alerts-list {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        .button {
+            display: inline-block;
+            padding: 10px 20px;
+            font-size: 1em;
+            margin: 10px;
+            text-decoration: none;
+            background-color: #4285f4;
+            color: #fff;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .button:hover {
+            background-color: #2962ff;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Caregiver Dashboard</h1>
+
+    <img id="intro-image" src="https://via.placeholder.com/800x400" alt="Introductory Image">
+
+    <div id="fallen-messages">
+        <h2>Fallen Messages</h2>
+        <p id="no-falls-message">No falls detected yet.</p>
+        <ul id="fallen-messages-list"></ul>
+    </div>
+
+    <div id="real-time-alerts">
+        <h2>Real-time Alerts</h2>
+        <ul id="real-time-alerts-list"></ul>
+        <a href="#" class="button" onclick="recordVoice()">Record Voice</a>
+        <a href="#" class="button" onclick="openCamera()">Open Camera</a>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
+    <script>
+        // Connect to the SocketIO server
+        const socket = io.connect('http://' + document.domain + ':' + location.port);
+
+        // Update fallen messages on the dashboard
+        socket.on('update_fallen_messages', function (data) {
+            const fallenMessagesList = document.getElementById('fallen-messages-list');
+            fallenMessagesList.innerHTML = ''; // Clear the existing list
+
+            data.fallen_messages.forEach(message => {
+                const listItem = document.createElement('li');
+                listItem.textContent = `Fall Detected: ${message.fall_detected}, Heart Distress: ${message.heart_distress}`;
+                fallenMessagesList.appendChild(listItem);
+            });
+        });
+
+        // Display real-time alerts on the dashboard
+        socket.on('fall_alert', function (data) {
+            const alertsList = document.getElementById('real-time-alerts-list');
+            const listItem = document.createElement('li');
+            listItem.textContent = `Fall Alert: ${data.message}`;
+            alertsList.appendChild(listItem);
+        });
+
+        socket.on('heart_distress_alert', function (data) {
+            const alertsList = document.getElementById('real-time-alerts-list');
+            const listItem = document.createElement('li');
+            listItem.textContent = `Heart Distress Alert: ${data.message}`;
+            alertsList.appendChild(listItem);
+        });
+
+
+        function recordVoice() {
+            alert('Recording voice...');
+        }
+
+        function openCamera() {
+            alert('Opening camera...');
+        }
+    </script>
+</body>
+
+</html>

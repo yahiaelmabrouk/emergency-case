@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fall Detection Dashboard</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
+</head>
+
+<body>
+    <h1>output:</h1>
+    <div id="alert-container"></div>
+    <script>
+        const socket = io();
+
+        function sendFallDetectionResult(landmarks, imageHeight) {
+            socket.emit('fall_detection_result', { landmarks, imageHeight });
+        }
+
+        socket.on('fall_alert', function (data) {
+            const alertContainer = document.getElementById('alert-container');
+            alertContainer.innerHTML = `<div style="color: red;">${data.message}</div>`;
+        });
+    </script>
+</body>
+
+</html>

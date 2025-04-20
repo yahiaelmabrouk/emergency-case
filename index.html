@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Fall Detection</title>
+    <style>
+      video {
+        border: 2px solid black;
+        width: 80%;
+        height: auto;
+      }
+      #output {
+        font-size: 1.5rem;
+        color: red;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Fall Detection System</h1>
+    <p id="output">Status: Waiting for detection...</p>
+    <video id="video" autoplay muted></video>
+    <script>
+      const video = document.getElementById("video");
+      const output = document.getElementById("output");
+
+      // Access the camera
+      navigator.mediaDevices
+        .getUserMedia({ video: true })
+        .then(function (stream) {
+          video.srcObject = stream;
+        })
+        .catch(function (error) {
+          console.error("Error accessing the camera: ", error);
+        });
+
+      // Function to capture frames and send them to the backend
+      async function sendFrame() {
+        const canvas = document.createElement("canvas");
+        const context = canvas.getContext("2d");
+        canvas.width = video.videoWidth;
+        canvas.height = video.videoHeight;
+
+        // Draw the current video frame to the canvas
+        context.drawImage(video, 0, 0, canvas.width, canvas.height);
+        const imageData = canvas.toDataURL("image/jpeg");
+
+        // Send the frame to the backend
+        try {
+          const response = await fetch("http://127.0.0.1:8000/detect_fall", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ image: imageData }),
+          });
+          const data = await response.json();
+          if (data.fall_detected) {
+            output.textContent = "Status: Fall detected!";
+          } else {
+            output.textContent = "Status: No fall detected.";
+          }
+        } catch (error) {
+          console.error("Error sending frame to backend: ", error);
+        }
+      }
+
+      // Call the sendFrame function every second
+      setInterval(sendFrame, 1000);
+    </script>
+  </body>
+</html>
