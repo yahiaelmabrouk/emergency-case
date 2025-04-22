@@ -24,7 +24,6 @@
       const video = document.getElementById("video");
       const output = document.getElementById("output");
 
-      // Access the camera
       navigator.mediaDevices
         .getUserMedia({ video: true })
         .then(function (stream) {
@@ -34,18 +33,15 @@
           console.error("Error accessing the camera: ", error);
         });
 
-      // Function to capture frames and send them to the backend
       async function sendFrame() {
         const canvas = document.createElement("canvas");
         const context = canvas.getContext("2d");
         canvas.width = video.videoWidth;
         canvas.height = video.videoHeight;
 
-        // Draw the current video frame to the canvas
         context.drawImage(video, 0, 0, canvas.width, canvas.height);
         const imageData = canvas.toDataURL("image/jpeg");
 
-        // Send the frame to the backend
         try {
           const response = await fetch("http://127.0.0.1:8000/detect_fall", {
             method: "POST",
@@ -65,7 +61,6 @@
         }
       }
 
-      // Call the sendFrame function every second
       setInterval(sendFrame, 1000);
     </script>
   </body>

@@ -9,12 +9,9 @@ app = Flask(__name__)
 def draw_text(image, text, position, font=cv2.FONT_HERSHEY_SIMPLEX, font_scale=0.5, color=(255, 255, 255), thickness=1):
     cv2.putText(image, text, position, font, font_scale, color, thickness, cv2.LINE_AA)
 
-# ... (your other functions)
-
 mp_pose = mp.solutions.pose
 mp_drawing = mp.solutions.drawing_utils
 
-# Initialize start_time outside the loop
 distress_detection.start_time = None
 
 cap = cv2.VideoCapture(0)
@@ -38,7 +35,7 @@ def gen():
 
             start_point = (5, 10)
             end_point = (400, 60)
-            rectangle_color = (0, 0, 255)  # Blue color
+            rectangle_color = (0, 0, 255)
             draw_filled_rectangle(image, start_point, end_point, rectangle_color)
 
             if distress_flag or detect_fall(landmarks, image.shape[0]):

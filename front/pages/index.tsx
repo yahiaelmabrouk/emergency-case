@@ -7,18 +7,18 @@ import DemoVideo from "../components/DemoVideo";
 
 export default function Home() {
   const [darkMode, setDarkMode] = useState(false);
-  const [chatOpen, setChatOpen] = useState(false); // Add chat open state
-  const [chatInput, setChatInput] = useState(""); // Add state for chat input
+  const [chatOpen, setChatOpen] = useState(false);
+  const [chatInput, setChatInput] = useState("");
   const [chatMessages, setChatMessages] = useState([
     { from: "bot", text: "Hi! How can I help you today?" },
-  ]); // Add chatMessages state
-  const [featuresOpen, setFeaturesOpen] = useState(false); // Popup state
+  ]);
+  const [featuresOpen, setFeaturesOpen] = useState(false);
   const [webcamOpen, setWebcamOpen] = useState(false);
   const webcamRef = useRef<HTMLVideoElement>(null);
   const [loading, setLoading] = useState(false);
 
   async function sendToGemini(message: string): Promise<string> {
-    const apiKey = "AIzaSyDDZPiXRKGHjGKPFYSv3bFrV_BPG_ZxSeQ"; // <-- Using provided Gemini API key
+    const apiKey = "AIzaSyDDZPiXRKGHjGKPFYSv3bFrV_BPG_ZxSeQ";
     const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
     const body = {
       contents: [
@@ -39,7 +39,6 @@ export default function Home() {
         body: JSON.stringify(body),
       });
       const data = await res.json();
-      // Gemini returns: data.candidates[0].content.parts[0].text
       return (
         data?.candidates?.[0]?.content?.parts?.[0]?.text ||
         "Sorry, I couldn't get a response."
@@ -49,7 +48,6 @@ export default function Home() {
     }
   }
 
-  // Automatically detect system color scheme and sync dark mode
   useEffect(() => {
     if (typeof window === "undefined") return;
     const mq = window.matchMedia("(prefers-color-scheme: dark)");
@@ -77,9 +75,7 @@ export default function Home() {
             webcamRef.current.play();
           }
         })
-        .catch(() => {
-          // Optionally handle error
-        });
+        .catch(() => {});
     }
     return () => {
       if (stream) {
@@ -154,7 +150,6 @@ export default function Home() {
           </button>
         </div>
       </header>
-      {/* Features Popup Modal */}
       {featuresOpen && (
         <div
           style={{
@@ -396,7 +391,6 @@ export default function Home() {
           </div>
         </div>
       )}
-      {/* Webcam Popup Modal */}
       {webcamOpen && (
         <div
           style={{
@@ -450,7 +444,6 @@ export default function Home() {
             <h2 style={{ marginBottom: "1.2rem", color: "#18382b" }}>
               Live Demo
             </h2>
-            {/* Replace the webcam video with the Flask video stream */}
             <DemoVideo />
             <div style={{ color: "#888", fontSize: "0.98rem" }}>
               The video feed is powered by Flask and Mediapipe.
@@ -475,17 +468,14 @@ export default function Home() {
         <section className={styles.trusted}>
           <p>Trusted by leading Hospitals</p>
           <div className={styles.logos}>
-            {/* Company 1 logo updated */}
             <img
               src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ8GeTr4PU0yQ6DIRb_FieQ_phiYdetSeFsDQ&s"
               alt="Company 1"
             />
-            {/* Company 2 logo updated */}
             <img
               src="https://www.cliniquelesoliviers.net/sites/all/themes/zayatine/skins/img/logo-zayatine-fr.svg"
               alt="Company 2"
             />
-            {/* Company 3 logo updated */}
             <img
               src="https://www.clinique-elyosr-maternite.com/assets/img/groupe-el-yosr.png"
               alt="Company 3"
@@ -493,9 +483,7 @@ export default function Home() {
           </div>
         </section>
         <Advice />
-        <section id="safety-tips" className={styles.advice}>
-          {/* ...move the Advice component content here or add id to Advice... */}
-        </section>
+        <section id="safety-tips" className={styles.advice}></section>
       </main>
       <footer className={styles.footer} id="footer">
         <div className={styles.logo}>
@@ -548,7 +536,6 @@ export default function Home() {
           </div>
         </div>
       </footer>
-      {/* Chat bot floating button */}
       {!chatOpen && (
         <button
           className={styles.chatBotButton}
@@ -558,7 +545,6 @@ export default function Home() {
           <span className="material-symbols-outlined">robot_2</span>
         </button>
       )}
-      {/* Backdrop overlay when chat is open */}
       {chatOpen && (
         <div
           className={styles.chatBackdrop}
@@ -566,7 +552,6 @@ export default function Home() {
           aria-label="Close chat bot"
         />
       )}
-      {/* Side chat panel */}
       <div
         className={`${styles.chatPanel} ${
           chatOpen ? styles.chatPanelOpen : ""

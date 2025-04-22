@@ -11,22 +11,17 @@ import math
 
 app = FastAPI()
 
-# Mediapipe setup
 mp_pose = mp.solutions.pose
 mp_drawing = mp.solutions.drawing_utils
 
-# Text-to-Speech setup
 tts_engine = pyttsx3.init()
 tts_engine.setProperty("rate", 150)
 tts_engine.setProperty("volume", 1.0)
 
-# Hugging Face model setup
 text_generator = pipeline("text-generation", model="gpt2")
 
-# Alert sound path
 ALERT_SOUND_PATH = "alert.wav"
 
-# Helper functions
 def draw_text(image, text, position, font=cv2.FONT_HERSHEY_SIMPLEX, font_scale=0.5, color=(255, 255, 255), thickness=1):
     cv2.putText(image, text, position, font, font_scale, color, thickness, cv2.LINE_AA)
 
@@ -53,34 +48,23 @@ def speak(text):
     tts_engine.say(text)
     tts_engine.runAndWait()
 
-
-
 def generate_instructions():
     prompt = "A person has fallen and needs immediate help. Provide specific instructions."
     response = text_generator(prompt, max_length=50, num_return_sequences=1)
     return response[0]["generated_text"].strip()
 
-# API Endpoints
-
 @app.post("/process/frame")
 async def process_frame(file: UploadFile = File(...)):
-    """
-    Process a video frame to detect falls and distress signals.
-    """
     try:
-        # Read the uploaded file as an image
         contents = await file.read()
         nparr = np.frombuffer(contents, np.uint8)
         frame = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
-        
-        # Convert to RGB for Mediapipe processing
         image = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
         image.flags.writeable = False
 
         with mp_pose.Pose(min_detection_confidence=0.7, min_tracking_confidence=0.7) as pose:
             results = pose.process(image)
 
-        # Convert back to BGR for visualization
         image.flags.writeable = True
         image = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
 
@@ -94,10 +78,7 @@ async def process_frame(file: UploadFile = File(...)):
                 response_text = "No fall detected."
         else:
             response_text = "No landmarks detected."
-
-        # Return response
         return {"message": response_text}
-
     except Exception as e:
         return {"error": str(e)}
 
