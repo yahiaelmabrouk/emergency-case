@@ -18,7 +18,10 @@ export default function Home() {
   const [loading, setLoading] = useState(false);
 
   async function sendToGemini(message: string): Promise<string> {
-    const apiKey = "AIzaSyDDZPiXRKGHjGKPFYSv3bFrV_BPG_ZxSeQ";
+    const apiKey = process.env.NEXT_PUBLIC_GEMINI_API_KEY;
+    if (!apiKey) {
+      return "API key is not set.";
+    }
     const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
     const body = {
       contents: [
